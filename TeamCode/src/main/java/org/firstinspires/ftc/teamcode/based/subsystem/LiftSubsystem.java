@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.based.subsystem;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.common.RobotHardwareConfig;
 
+@Config
 public class LiftSubsystem extends SubsystemBase {
     private DcMotorEx liftMotor;
 
