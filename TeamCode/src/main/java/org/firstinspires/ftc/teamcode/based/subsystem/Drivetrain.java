@@ -133,16 +133,12 @@ public class Drivetrain extends SubsystemBase {
             m_heading += 360;
         }
 
-        if (Math.abs(error) < margin){
-            error = 0;
-        }
-
         calcRot = controller.calculate(m_heading, targetHeading);
 
         switch (state){
             case PID:
                 if (Double.compare(rotation, 0d) == 0){
-                    driveRaw(strafe, forward, calcRot);
+                    driveRaw(strafe, forward, (Math.abs(error) > margin) ? calcRot : 0d);
                     break;
                 }
                 state = State.ROTATE;
