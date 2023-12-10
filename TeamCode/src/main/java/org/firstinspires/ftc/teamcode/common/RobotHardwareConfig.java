@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Config
 public final class RobotHardwareConfig {
     public static class Drive{
         public static final String FL_STRING = "Front_Left";

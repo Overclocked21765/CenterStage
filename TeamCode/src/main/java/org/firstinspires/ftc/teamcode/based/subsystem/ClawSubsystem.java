@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.common.RobotHardwareConfig;
 public class ClawSubsystem {
     private Servo clawSwervo;
 
-    public static double OPEN = 0.6;
+    public static double OPEN = 0.65;
     public static double CLOSE = 0.4;
 
     public ClawSubsystem(HardwareMap hardwareMap){

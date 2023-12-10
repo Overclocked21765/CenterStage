@@ -14,10 +14,12 @@ public class LiftSubsystem extends SubsystemBase {
 
     private int targetPosition, currentPosition, lastTargetPosition;
 
-    public static int MAX = 2000;
+    public static int MAX = 3650;
     public static int MIN = 60;
 
-    public static int TICKS_PER_REQUEST = 10;
+    public static int TICKS_PER_REQUEST = 225;
+
+    public boolean resetting;
 
 
 
@@ -26,12 +28,14 @@ public class LiftSubsystem extends SubsystemBase {
 
         targetPosition = 0;
         lastTargetPosition = 0;
+        resetting = false;
 
         this.liftMotor = hardwareMap.get(DcMotorEx.class, RobotHardwareConfig.Lift.LIFT_STRING);
         this.liftMotor.setZeroPowerBehavior(RobotHardwareConfig.Lift.DEFAULT_BEHAVIOR);
         this.liftMotor.setDirection(RobotHardwareConfig.Lift.LIFT_DIRECTION);
         this.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.liftMotor.setTargetPosition(targetPosition);
+        this.liftMotor.setPower(0.99);
         this.liftMotor.setMode(RobotHardwareConfig.Lift.DEFAULT_RUNMODE);
 
     }
@@ -53,7 +57,7 @@ public class LiftSubsystem extends SubsystemBase {
     }
 
     public void resetMovement(){
-        this.setTargetPosition(this.targetPosition - 1);
+        this.setTargetPosition(this.targetPosition - 100);
     }
 
     public void reset(){
@@ -74,6 +78,10 @@ public class LiftSubsystem extends SubsystemBase {
     public void periodic(){
         this.currentPosition = this.liftMotor.getCurrentPosition();
 
+        if (!resetting){
+            if (this.currentPosition > MAX) this.setTargetPosition(MAX);
+            else if (this.currentPosition < MIN) this.setTargetPosition(MIN);
+        }
 
     }
 }

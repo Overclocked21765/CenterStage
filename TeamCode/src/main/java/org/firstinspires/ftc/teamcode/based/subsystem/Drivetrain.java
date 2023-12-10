@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -13,10 +14,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.common.Algorithms;
-import org.firstinspires.ftc.teamcode.common.Constants;
-import org.firstinspires.ftc.teamcode.common.DcMotorWrapper;
-
-import static org.firstinspires.ftc.teamcode.common.RobotHardwareConfig.Drive;
 
 @Config
 public class Drivetrain extends SubsystemBase {
@@ -29,142 +26,179 @@ public class Drivetrain extends SubsystemBase {
     private DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     private IMU imu;
     private Telemetry telemetry;
-    private double heading;
 
     public static double kP = 0.015;
     public static double kI = 0;
     public static double kD = 0;
-    public static double margin = 1.5;
+    public static double margin = 2;
     public static double maxAllowedError = 350;
-    private double targetHeading;
-    private boolean firstTimeAfterStickRelease;
-    private PIDController controller;
+    protected double targetHeading;
+    protected boolean firstTimeAfterStickRelease;
+    PIDController controller;
 
-    private double maxError;
+    double maxError;
 
-    private State state;
+    public enum States{
+        PID,
+        ROTATING,
+        SETTING
+    }
+
+    States state;
 
 
 
-    public Drivetrain(HardwareMap hwMap, DcMotor.ZeroPowerBehavior zeroPowerBehavior, DcMotor.RunMode runMode, Telemetry telemetry){
-        super();
+    public void update(double leftX, double leftY, double rightX){
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double heading = orientation.getYaw(AngleUnit.DEGREES);
+        double error = heading - targetHeading;
+
+        double headingUnused = heading;
+        if (error > maxAllowedError){
+            error -= 360;
+            headingUnused -= 360;
+        } else if (error < -maxAllowedError){
+            error += 360;
+            headingUnused += 360;
+        }
+
+        if (Math.abs(error) > maxError){
+            maxError = Math.abs(error);
+        }
+
+        if (rightX == 0) {
+            if (firstTimeAfterStickRelease){
+                targetHeading = heading;
+                error = heading - targetHeading;
+                firstTimeAfterStickRelease = false;
+            }
+            if (Math.abs(error) > margin) {
+                drive(controller.calculate(heading, targetHeading), leftX, leftY, heading);
+            } else {
+                drive(0, leftX, leftY, heading);
+            }
+            telemetry.addData("Mode: ", "PID");
+        } else {
+            drive(rightX, leftX, leftY, heading);
+            firstTimeAfterStickRelease = true;
+            telemetry.addData("Mode: ", "Rotating");
+        }
+
+
+        telemetry.addData("Heading: ", heading);
+        telemetry.addData("Heading unused: ", headingUnused);
+        telemetry.addData("Error: ", error);
+        telemetry.addData("Target: ", targetHeading);
+        telemetry.addData("Max Error: ", maxError);
+
+    }
+
+    public void resetYaw(){
+        imu.resetYaw();
+        targetHeading = 0;
+    }
+
+
+
+    public Drivetrain(HardwareMap hwMap, DcMotor.ZeroPowerBehavior zeroPowerBehavior, Telemetry telemetry){
+        targetHeading = 0;
+        state = States.PID;
+        firstTimeAfterStickRelease = false;
+        controller = new PIDController(kP, kI, kD);
+        maxError = 0;
         this.telemetry = telemetry;
-//        this.frontLeftMotor = hwMap.get(DcMotorEx.class, Drive.FL_STRING);
-//        this.frontRightMotor = hwMap.get(DcMotorEx.class, Drive.FR_STRING);
-//        this.backLeftMotor = hwMap.get(DcMotorEx.class, Drive.BL_STRING);
-//        this.backRightMotor = hwMap.get(DcMotorEx.class, Drive.BR_STRING);
-
-//        this.frontLeftMotor.setMode(runMode);
-//        this.frontRightMotor.setMode(runMode);
-//        this.backLeftMotor.setMode(runMode);
-//        this.backRightMotor.setMode(runMode);
-
-//        this.frontLeftMotor.setDirection(Drive.FL_DIRECTION);
-//        this.frontRightMotor.setDirection(Drive.FR_DIRECTION);
-//        this.backLeftMotor.setDirection(Drive.BL_DIRECTION);
-//        this.backRightMotor.setDirection(Drive.BR_DIRECTION);
-
-//        this.frontLeftMotor.setZeroPowerBehavior(zeroPowerBehavior);
-//        this.frontRightMotor.setZeroPowerBehavior(zeroPowerBehavior);
-//        this.backLeftMotor.setZeroPowerBehavior(zeroPowerBehavior);
-//        this.backRightMotor.setZeroPowerBehavior(zeroPowerBehavior);
-
-        this.frontLeftMotor = new DcMotorWrapper(Drive.FL_STRING, hwMap, Drive.FL_DIRECTION, Drive.DEFAULT_RUNMODE);
-        this.frontRightMotor = new DcMotorWrapper(Drive.FR_STRING, hwMap, Drive.FR_DIRECTION, Drive.DEFAULT_RUNMODE);
-        this.backLeftMotor = new DcMotorWrapper(Drive.BL_STRING, hwMap, Drive.BL_DIRECTION, Drive.DEFAULT_RUNMODE);
-        this.backRightMotor = new DcMotorWrapper(Drive.BR_STRING, hwMap, Drive.BR_DIRECTION, Drive.DEFAULT_RUNMODE);
-
-        this.frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        this.frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        this.backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        this.backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        this.imu = hwMap.get(IMU.class, Drive.IMU_STRING);
-        this.imu.initialize(
+        //This sets up the motors it also tells us what the names of our motors are in a string format
+        frontLeftMotor = hwMap.get(DcMotorEx.class, "Front_Left");
+        frontRightMotor = hwMap.get(DcMotorEx.class, "Front_Right");
+        backLeftMotor = hwMap.get(DcMotorEx.class, "Back_Left");
+        backRightMotor = hwMap.get(DcMotorEx.class, "Back_Right");
+        //This makes our motors run using encoders
+        frontLeftMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backRightMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        //This sets the motors default direction that it spins
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        //This makes sure that when the motors are given no input they will not do anything
+        frontLeftMotor.setZeroPowerBehavior(zeroPowerBehavior);
+        frontRightMotor.setZeroPowerBehavior(zeroPowerBehavior);
+        backLeftMotor.setZeroPowerBehavior(zeroPowerBehavior);
+        backRightMotor.setZeroPowerBehavior(zeroPowerBehavior);
+        //This is gyro/imu stuff
+        imu = hwMap.get(IMU.class, "imu");
+        imu.initialize(
                 new IMU.Parameters(
                         new RevHubOrientationOnRobot(
-                                Drive.IMU_LOGO_FACING,
-                                Drive.IMU_USB_FACING
+                                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                                RevHubOrientationOnRobot.UsbFacingDirection.UP
                         )
                 )
         );
 
-        this.controller = new PIDController(kP, kI, kD);
+        this.resetYaw();
     }
 
-    public Drivetrain(HardwareMap hwMap, DcMotor.ZeroPowerBehavior behavior, DcMotor.RunMode runMode){
-        this(hwMap, behavior, runMode, null);
+
+
+    public void drive(double rotation, double strafe, double forwardPower, double heading){
+        double [] motorArraySpeeds = Algorithms.returnMecanumValues(rotation, strafe, forwardPower, heading, 0.8);
+
+        frontLeftMotor.setPower(motorArraySpeeds[0]);
+        frontRightMotor.setPower(motorArraySpeeds[1]);
+        backLeftMotor.setPower(motorArraySpeeds[2]);
+        backRightMotor.setPower(motorArraySpeeds[3]);
     }
 
-    public Drivetrain(HardwareMap hwMap, DcMotor.ZeroPowerBehavior behavior){
-        this(hwMap, behavior, Drive.DEFAULT_RUNMODE);
-    }
 
-    public Drivetrain(HardwareMap hwMap){
-        this(hwMap, Drive.DEFAULT_BEHAVIOR);
-    }
-
-    public void resetYaw(){
-        this.imu.resetYaw();
-        this.targetHeading = 0;
-    }
-
-    public void driveRaw(double strafe, double forward, double rotation){
-        double[] motorArraySpeeds = Algorithms.returnMecanumValues(forward, strafe, rotation, heading, Constants.Drive.DRIVE_POWER_MODIFIER);
-
-        frontLeftMotor.setPower(motorArraySpeeds[Constants.Drive.MECANUM_FRONT_LEFT_MOTOR]);
-        frontRightMotor.setPower(motorArraySpeeds[Constants.Drive.MECANUM_FRONT_RIGHT_MOTOR]);
-        backLeftMotor.setPower(motorArraySpeeds[Constants.Drive.MECANUM_BACK_LEFT_MOTOR]);
-        backRightMotor.setPower(motorArraySpeeds[Constants.Drive.MECANUM_BACK_RIGHT_MOTOR]);
-    }
-
-    public void drive(double strafe, double forward, double rotation){
-        double calcRot;
-
-        double error = this.heading - this.targetHeading;
-
-        double m_heading = this.heading;
-
-        if (Double.compare(error, 180d) > 0){
+    public void drive(double leftX, double leftY, double rightX){
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double heading = orientation.getYaw(AngleUnit.DEGREES);
+        double error = heading - targetHeading;
+        if (error > maxAllowedError){
             error -= 360;
-            m_heading -= 360;
-        } else if (Double.compare(error, -180d) < 0){
+            heading -= 360;
+        } else if (error < -maxAllowedError){
             error += 360;
-            m_heading += 360;
+            heading += 360;
         }
 
-        calcRot = controller.calculate(m_heading, targetHeading);
-
-        switch (state){
-            case PID:
-                if (Double.compare(rotation, 0d) == 0){
-                    driveRaw(strafe, forward, (Math.abs(error) > margin) ? calcRot : 0d);
-                    break;
-                }
-                state = State.ROTATE;
-            case ROTATE:
-                if (Double.compare(rotation, 0d) == 0){
-                    targetHeading = this.heading;
-                    drive(strafe, forward, 0d);
-                    state = State.PID;
-                    break;
-                }
-                driveRaw(strafe, forward, rotation);
-                break;
-
+        if (Math.abs(error) > maxError){
+            maxError = Math.abs(error);
         }
 
-        telemetry.addData("Heading: ", this.heading);
-        telemetry.addData("Corrected heading: ", m_heading);
+        if (rightX == 0) {
+            if (firstTimeAfterStickRelease){
+                targetHeading = heading;
+                error = heading - targetHeading;
+                firstTimeAfterStickRelease = false;
+            }
+            if (Math.abs(error) > margin) {
+                drive(controller.calculate(heading, targetHeading), leftX, leftY, heading);
+            } else {
+                drive(0, leftX, leftY, heading);
+            }
+            telemetry.addData("Mode: ", "PID");
+        } else {
+            drive(rightX, leftX, leftY, heading);
+            firstTimeAfterStickRelease = true;
+            telemetry.addData("Mode: ", "Rotating");
+        }
+
+
+        telemetry.addData("Heading: ", heading);
         telemetry.addData("Error: ", error);
+        telemetry.addData("Target: ", targetHeading);
+        telemetry.addData("Max Error: ", maxError);
+
     }
 
 
-    @Override
-    public void periodic(){
-        YawPitchRollAngles yawPitchRollAngles = this.imu.getRobotYawPitchRollAngles();
-        this.heading = yawPitchRollAngles.getYaw(AngleUnit.DEGREES);
+
+
+    public void setTelemetry(Telemetry telemetry){
+        this.telemetry = telemetry;
     }
-
-
 }

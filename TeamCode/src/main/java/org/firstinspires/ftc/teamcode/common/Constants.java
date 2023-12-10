@@ -10,7 +10,7 @@ public class Constants {
         public static final int MECANUM_FRONT_RIGHT_MOTOR = 1;
         public static final int MECANUM_BACK_LEFT_MOTOR = 2;
         public static final int MECANUM_BACK_RIGHT_MOTOR = 3;
-        public static double DRIVE_POWER_MODIFIER = 0.8; //how fast will the robot drive (as a percentage)
+        public static double DRIVE_POWER_MODIFIER = 0.95; //how fast will the robot drive (as a percentage)
         public static double SLOW_DRIVE_MODIFIER = 0.3; //a requested slower speed
     }
 
