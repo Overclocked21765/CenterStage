@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common;
+package org.firstinspires.ftc.teamcode.common.util;
 
 import static org.firstinspires.ftc.teamcode.common.Constants.Drive.ROTATION_CONSTANT;
 

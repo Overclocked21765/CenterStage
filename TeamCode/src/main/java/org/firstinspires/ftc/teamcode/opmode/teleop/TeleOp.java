@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -115,7 +115,7 @@ public class TeleOp extends CommandOpMode {
         } else {
             m_drive.update(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x);
         }
-//double leftX, double leftY, double rightX
+        //double leftX, double leftY, double rightX
         if (gamepad1.y && !buttonAlreadyPressed){
             m_drive.resetYaw();
         }

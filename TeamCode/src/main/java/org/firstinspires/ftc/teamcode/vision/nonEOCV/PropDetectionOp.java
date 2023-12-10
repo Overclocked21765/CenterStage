@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.nonEOCV;
+package org.firstinspires.ftc.teamcode.vision.nonEOCV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
