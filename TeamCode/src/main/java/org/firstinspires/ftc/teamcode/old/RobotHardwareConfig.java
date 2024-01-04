@@ -1,18 +1,17 @@
-package org.firstinspires.ftc.teamcode.common;
+package org.firstinspires.ftc.teamcode.old;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Config
+@Deprecated
 public final class RobotHardwareConfig {
     public static class Drive{
-        public static final String FL_STRING = "FL";
-        public static final String FR_STRING = "FR";
-        public static final String BL_STRING = "BL";
-        public static final String BR_STRING = "BR";
+        public static final String FL_STRING = "Front_Left";
+        public static final String FR_STRING = "Front_Right";
+        public static final String BL_STRING = "Back_Left";
+        public static final String BR_STRING = "Back_Right";
 
         public static final String IMU_STRING = "imu";
 
@@ -30,26 +29,20 @@ public final class RobotHardwareConfig {
     }
 
     public static class Lift{
-        public static String
-            LEFT_MOTOR_STRING = "Lift Left",
-            RIGHT_MOTOR_STRING = "Lift Right";
+        public static final String LIFT_STRING = "Slide_Motor";
 
-        public static DcMotorSimple.Direction
-            LEFT_DIRECTION = DcMotorSimple.Direction.FORWARD,
-            RIGHT_DIRECTION = DcMotorSimple.Direction.FORWARD;
-
-
+        public static DcMotorSimple.Direction LIFT_DIRECTION = DcMotorSimple.Direction.REVERSE;
+        public static DcMotor.RunMode DEFAULT_RUNMODE = DcMotor.RunMode.RUN_TO_POSITION;
+        public static DcMotor.ZeroPowerBehavior DEFAULT_BEHAVIOR = DcMotor.ZeroPowerBehavior.BRAKE;
 
     }
 
 
 
     public static class Claw{
-        public static final String CLAW_LEFT_STRING = "Claw Left";
-        public static final String CLAW_RIGHT_STRING = "Claw Right";
+        public static final String CLAW_STRING = "Claw_Servo";
 
-        public static Servo.Direction CLAW_LEFT_DIRECTION = Servo.Direction.FORWARD;
-        public static Servo.Direction CLAW_RIGHT_DIRECTION = Servo.Direction.REVERSE;
+        public static Servo.Direction CLAW_DIRECTION = Servo.Direction.FORWARD;
 
     }
 }

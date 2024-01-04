@@ -83,29 +83,23 @@ public class DcMotorWrapper implements DcMotorEx {
 
     @Override
     public void setVelocity(double angularRate, AngleUnit unit) {
-        if (lastAngleRate != angularRate){
-            if (lastAngleUnit == unit){
-                motor.setVelocity(angularRate, unit);
-                lastAngleRate = angularRate;
-            } else {
-                if (lastAngleUnit == AngleUnit.DEGREES){
-                    if (Math.toDegrees(angularRate) != lastAngleRate){
-                        motor.setVelocity(angularRate, unit);
-                        lastAngleUnit = unit;
-                        lastAngleRate = angularRate;
-                    }
-                } else if (Math.toRadians(angularRate) != lastAngleRate){
-                    motor.setVelocity(angularRate, unit);
-                    lastAngleRate = angularRate;
-                    lastAngleUnit = unit;
-                }
+        double currentRate;
+        if (this.lastAngleUnit == AngleUnit.DEGREES){
+            currentRate = Math.toRadians(this.lastAngleRate);
+        } else {
+            currentRate = this.lastAngleRate;
+        }
 
-            }
-        } else if (lastAngleUnit != unit){
+        double setRate = (unit == AngleUnit.DEGREES) ? Math.toRadians(angularRate) : angularRate;
+
+        if (Double.compare(setRate, currentRate) != 0) {
             motor.setVelocity(angularRate, unit);
             lastAngleRate = angularRate;
             lastAngleUnit = unit;
         }
+
+
+
     }
 
     @Override

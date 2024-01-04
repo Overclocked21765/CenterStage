@@ -15,20 +15,9 @@ public class Constants {
     }
 
     public static class Lift{
-        public static double MOTOR_SLIDE_POWER = 1; //how fast will the slide move (as a percentage)
-        public static final double MOTOR_SLIDE_RESET_POWER = -0.3; //how fast slide moves when resetting (as a percentage) KEEP THIS VALUE NEGATIVE
-        public static int GROUND_POSITION = 30;//folowing variables are encoder tick values
-        public static int LOW_POSITION = 480; //low junction
-        public static int MEDIUM_POSITION = 830; //medium junction
-        public static int HIGH_POSITION = 1190; //high junction
-        public static int CONE_ONE = 60; //conestack 1 225
-        public static int CONE_TWO = 105; //coestack 2 348
-        public static int CONE_THREE = 145; //conestack 3 492
-        public static int CONE_FOUR = 180; //conestack 4 653
-        public static int RED_ZONE = 500; //the height at which it is safe to rotate the claw, this was initially 10
-        public static int LINEAR_SLIDE_MINIMUM = 30; //lowest point   for linear slide
-        public static int LINEAR_SLIDE_MAXIMUM = 1200; //highest point for linear slide
-        public static final int LINEAR_SLIDE_MARGIN_ERROR = 10; //a margin of error to account for PID
+        public static double RESET_SPEED = -0.2;
+
+        public static int GROUND_POSITION = 0;
     }
 
     public static class PassThrough{

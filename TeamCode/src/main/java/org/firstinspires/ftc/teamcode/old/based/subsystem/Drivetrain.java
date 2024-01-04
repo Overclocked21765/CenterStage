@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.based.subsystem;
+package org.firstinspires.ftc.teamcode.old.based.subsystem;
 
 import static org.firstinspires.ftc.teamcode.common.util.Algorithms.returnMecanumValues;
 
@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -16,15 +17,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.common.Constants;
 
-import org.firstinspires.ftc.teamcode.common.RobotHardwareConfig;
-
-@Config
+@Deprecated
 public class Drivetrain extends SubsystemBase{
     private DcMotorEx frontLeftMotor;
     private DcMotorEx frontRightMotor;
     private DcMotorEx backLeftMotor;
     private DcMotorEx backRightMotor;
-
+    //This is gyro stuff or imu stuff
     private IMU imu;
     private Telemetry telemetry;
 
@@ -45,37 +44,37 @@ public class Drivetrain extends SubsystemBase{
         SETTING
     }
 
-    States state;
+    HeadingPID.States state;
 
     public void init(HardwareMap hwMap, DcMotor.ZeroPowerBehavior zeroPowerBehavior, Telemetry telemetry){
         this.telemetry = telemetry;
-
-        frontLeftMotor = hwMap.get(DcMotorEx.class, RobotHardwareConfig.Drive.FL_STRING);
-        frontRightMotor = hwMap.get(DcMotorEx.class, RobotHardwareConfig.Drive.FR_STRING);
-        backLeftMotor = hwMap.get(DcMotorEx.class, RobotHardwareConfig.Drive.BL_STRING);
-        backRightMotor = hwMap.get(DcMotorEx.class, RobotHardwareConfig.Drive.BR_STRING);
-
-        frontLeftMotor.setMode(RobotHardwareConfig.Drive.DEFAULT_RUNMODE);
-        frontRightMotor.setMode(RobotHardwareConfig.Drive.DEFAULT_RUNMODE);
-        backLeftMotor.setMode(RobotHardwareConfig.Drive.DEFAULT_RUNMODE);
-        backRightMotor.setMode(RobotHardwareConfig.Drive.DEFAULT_RUNMODE);
-
-        frontLeftMotor.setDirection(RobotHardwareConfig.Drive.FL_DIRECTION);
-        frontRightMotor.setDirection(RobotHardwareConfig.Drive.FR_DIRECTION);
-        backLeftMotor.setDirection(RobotHardwareConfig.Drive.BL_DIRECTION);
-        backRightMotor.setDirection(RobotHardwareConfig.Drive.BR_DIRECTION);
-
+        //This sets up the motors it also tells us what the names of our motors are in a string format
+        frontLeftMotor = hwMap.get(DcMotorEx.class, "Front_Left");
+        frontRightMotor = hwMap.get(DcMotorEx.class, "Front_Right");
+        backLeftMotor = hwMap.get(DcMotorEx.class, "Back_Left");
+        backRightMotor = hwMap.get(DcMotorEx.class, "Back_Right");
+        //This makes our motors run using encoders
+        frontLeftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        //This sets the motors default direction that it spins
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //This makes sure that when the motors are given no input they will not do anything
         frontLeftMotor.setZeroPowerBehavior(zeroPowerBehavior);
         frontRightMotor.setZeroPowerBehavior(zeroPowerBehavior);
         backLeftMotor.setZeroPowerBehavior(zeroPowerBehavior);
         backRightMotor.setZeroPowerBehavior(zeroPowerBehavior);
-
+        //This is gyro/imu stuff
         imu = hwMap.get(IMU.class, "imu");
         imu.initialize(
                 new IMU.Parameters(
                         new RevHubOrientationOnRobot(
-                                RobotHardwareConfig.Drive.IMU_LOGO_FACING,
-                                RobotHardwareConfig.Drive.IMU_USB_FACING
+                                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                                RevHubOrientationOnRobot.UsbFacingDirection.UP
                         )
                 )
         );
@@ -93,7 +92,7 @@ public class Drivetrain extends SubsystemBase{
     public Drivetrain(double heading, HardwareMap hardwareMap, Telemetry telemetry){
         super();
         targetHeading = heading;
-        state = States.PID;
+        state = HeadingPID.States.PID;
         firstTimeAfterStickRelease = false;
         controller = new PIDController(kP, kI, kD);
         maxError = 0;
@@ -102,8 +101,7 @@ public class Drivetrain extends SubsystemBase{
 
     }
 
-    @Deprecated
-    private void update(double leftX, double leftY, double rightX){
+    public void update(double leftX, double leftY, double rightX){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double heading = orientation.getYaw(AngleUnit.DEGREES);
         double error = heading - targetHeading;

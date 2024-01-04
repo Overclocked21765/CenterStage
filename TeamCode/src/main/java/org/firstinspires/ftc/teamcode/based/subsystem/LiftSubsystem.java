@@ -2,86 +2,78 @@ package org.firstinspires.ftc.teamcode.based.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.RobotHardwareConfig;
 
 @Config
 public class LiftSubsystem extends SubsystemBase {
-    private DcMotorEx liftMotor;
+    public static double
+        kP = 0,
+        kI = 0,
+        kD = 0;
 
-    private int targetPosition, currentPosition, lastTargetPosition;
+    public static double kF = 0;
 
-    public static int MAX = 3650;
-    public static int MIN = 60;
+    private DcMotorEx leftMotor;
+    private DcMotorEx rightMotor;
 
-    public static int TICKS_PER_REQUEST = 225;
+    private PIDController controller;
 
-    public boolean resetting;
+    private int target, currentPosition;
 
+    private double lastPower;
 
+    private boolean resetting = false;
 
     public LiftSubsystem(HardwareMap hardwareMap){
         super();
 
-        targetPosition = 0;
-        lastTargetPosition = 0;
-        resetting = false;
+        this.leftMotor = hardwareMap.get(DcMotorEx.class, RobotHardwareConfig.Lift.LEFT_MOTOR_STRING);
+        this.rightMotor = hardwareMap.get(DcMotorEx.class, RobotHardwareConfig.Lift.RIGHT_MOTOR_STRING);
 
-        this.liftMotor = hardwareMap.get(DcMotorEx.class, RobotHardwareConfig.Lift.LIFT_STRING);
-        this.liftMotor.setZeroPowerBehavior(RobotHardwareConfig.Lift.DEFAULT_BEHAVIOR);
-        this.liftMotor.setDirection(RobotHardwareConfig.Lift.LIFT_DIRECTION);
-        this.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.liftMotor.setTargetPosition(targetPosition);
-        this.liftMotor.setPower(0.99);
-        this.liftMotor.setMode(RobotHardwareConfig.Lift.DEFAULT_RUNMODE);
-
+        this.controller = new PIDController(kP, kI, kD);
     }
 
-    public void move(double dU){
-        int nextPosition = (int) (Math.round(dU * TICKS_PER_REQUEST) + this.currentPosition);
-        if (dU > 0 && nextPosition < MAX){
-            this.setTargetPosition(nextPosition);
-        } else if (dU < 0 && nextPosition > MIN){
-            this.setTargetPosition(nextPosition);
-        }
-
-        ;
+    public int getCurrentPosition(){
+        return this.leftMotor.getCurrentPosition();
     }
 
-    public void setTargetPosition(int target){
-        if (this.targetPosition != target) this.targetPosition = target;
-        this.liftMotor.setTargetPosition(this.targetPosition);
-    }
-
-    public void resetMovement(){
-        this.setTargetPosition(this.targetPosition - 100);
+    public void doResetMovement(){
+        this.resetting = true;
+        this.setPower(Constants.Lift.RESET_SPEED);
     }
 
     public void reset(){
-        this.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.setTargetPosition(0);
-        this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.setPower(0);
+        this.target = Constants.Lift.GROUND_POSITION;
+        controller.reset();
+        this.resetting = false;
     }
 
-    public int getTargetPosition(){
-        return this.targetPosition;
+    public void setTarget(int target){
+        if (this.target != target) this.target = target;
     }
 
-    public int getCurrentPosition() {
-        return currentPosition;
+    private void setPower(double power){
+        if (Double.compare(power, this.lastPower) != 0){
+            this.leftMotor.setPower(power);
+            this.rightMotor.setPower(power);
+            this.lastPower = power;
+        }
     }
 
     @Override
     public void periodic(){
-        this.currentPosition = this.liftMotor.getCurrentPosition();
+        this.currentPosition = this.leftMotor.getCurrentPosition();
 
         if (!resetting){
-            if (this.currentPosition > MAX) this.setTargetPosition(MAX);
-            else if (this.currentPosition < MIN) this.setTargetPosition(MIN);
+            double power = controller.calculate(this.currentPosition, this.target);
+            this.setPower(power + kF);
         }
-
     }
+
 }
