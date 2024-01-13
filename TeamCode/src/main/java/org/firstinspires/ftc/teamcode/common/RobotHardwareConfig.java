@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public final class RobotHardwareConfig {
+    private RobotHardwareConfig(){}
     public static class Drive{
         public static final String FL_STRING = "FL";
         public static final String FR_STRING = "FR";
@@ -42,9 +43,17 @@ public final class RobotHardwareConfig {
 
     }
 
+    public static class Arm{
+        public static final String LEFT_SERVO = "Arm Left";
+        public static final String RIGHT_SERVO = "Arm Right";
+
+        public static Servo.Direction ARM_LEFT_DIRECTION = Servo.Direction.FORWARD;
+        public static Servo.Direction ARM_RIGHT_DIRECTION = Servo.Direction.REVERSE;
+    }
 
 
-    public static class Claw{
+
+    public static class EndEffector {
         public static final String CLAW_LEFT_STRING = "Claw Left";
         public static final String CLAW_RIGHT_STRING = "Claw Right";
 

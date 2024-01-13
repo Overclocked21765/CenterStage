@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.old.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.old.roadrunner.trajectorysequence.TrajectorySequence;
 
 @Autonomous
-public class ParkAuto extends OpMode {
+public class ParkAutoRedRight extends OpMode {
     TrajectorySequence trajectory;
     SampleMecanumDrive drive;
     @Override

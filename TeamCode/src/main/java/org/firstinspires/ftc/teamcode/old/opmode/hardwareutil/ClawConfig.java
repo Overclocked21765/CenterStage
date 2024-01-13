@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.old.opmode.hardwareutil;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.old.RobotHardwareConfig;
 
 @Config
+@Disabled
 @TeleOp(group = "Hardware")
 public class ClawConfig extends OpMode {
     public static double pos = 0;
