@@ -7,11 +7,12 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.old.based.subsystem.Drivetrain;
-import org.firstinspires.ftc.teamcode.common.Constants;
 
+@Disabled
 @TeleOp
 public class HeadingPIDOpCommand extends CommandOpMode {
 
@@ -32,24 +33,7 @@ public class HeadingPIDOpCommand extends CommandOpMode {
                 )
         );
 
-        m_commandGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(
-                new InstantCommand(
-                        () -> m_drive.setDefaultCommand(
-                                new RunCommand(
-                                        () -> m_drive.updateExperimental(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x),
-                                        m_drive
-                                )
-                        )
-                ),
-                new InstantCommand(
-                        () -> m_drive.setDefaultCommand(
-                                new RunCommand(
-                                        () -> m_drive.drive(-gamepad1.right_stick_x, -gamepad1.left_stick_x, gamepad1.left_stick_y,0, Constants.Drive.DRIVE_POWER_MODIFIER),
-                                        m_drive
-                                )
-                        )
-                )
-        );
+
 
         m_drive.setDefaultCommand(
                 new RunCommand(

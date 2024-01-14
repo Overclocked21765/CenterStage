@@ -42,6 +42,10 @@ public class LiftSubsystem extends SubsystemBase {
         return this.leftMotor.getCurrentPosition();
     }
 
+    public int getTargetPosition(){
+        return this.target;
+    }
+
     public void doResetMovement(){
         this.resetting = true;
         this.setPower(Constants.Lift.RESET_SPEED);

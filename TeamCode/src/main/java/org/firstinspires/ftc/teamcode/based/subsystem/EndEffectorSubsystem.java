@@ -23,9 +23,17 @@ public class EndEffectorSubsystem extends SubsystemBase {
         this.rightServo.setDirection(RobotHardwareConfig.EndEffector.CLAW_RIGHT_DIRECTION);
     }
 
-    public void grab(){
+    public void grabLeft(){
         this.leftServo.setPosition(Constants.EndEffector.LEFT_CLOSE);
+    }
+
+    public void grabRight(){
         this.rightServo.setPosition(Constants.EndEffector.RIGHT_CLOSE);
+    }
+
+    public void grab(){
+        this.grabLeft();
+        this.grabRight();
     }
 
     public void releaseLeft(){

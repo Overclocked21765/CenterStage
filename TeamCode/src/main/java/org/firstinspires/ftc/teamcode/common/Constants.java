@@ -25,9 +25,12 @@ public class Constants {
     public static class Arm{
         private Arm(){}
 
-        public static double INTAKE_POSITION = 0;
-        public static double OUTTAKE_POSITION = 1;
-        public static double OUTTAKE_ALT_POSITION = 1;
+        public static double INTAKE_POSITION_LEFT = 0;
+        public static double INTAKE_POSITION_RIGHT = 0;
+        public static double OUTTAKE_POSITION_LEFT = 1;
+        public static double OUTTAKE_POSITION_RIGHT = 1;
+        public static double OUTTAKE_ALT_POSITION_LEFT = 1;
+        public static double OUTTAKE_ALT_POSITION_RIGHT = 1;
 
     }
 

@@ -4,9 +4,17 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.RobotHardwareConfig;
 
 public class ArmSubsystem extends SubsystemBase {
+    public enum ArmStates{
+        INTAKE,
+        DEPOSIT,
+        DEPOSIT_ALT
+    }
+
+    private ArmStates state;
     private Servo
         leftServo,
         rightServo;
@@ -17,17 +25,29 @@ public class ArmSubsystem extends SubsystemBase {
 
         this.leftServo.setDirection(RobotHardwareConfig.Arm.ARM_LEFT_DIRECTION);
         this.rightServo.setDirection(RobotHardwareConfig.Arm.ARM_RIGHT_DIRECTION);
+
+        state = ArmStates.INTAKE;
     }
 
     public void setIntakePosition(){
-
+        this.leftServo.setPosition(Constants.Arm.INTAKE_POSITION_LEFT);
+        this.rightServo.setPosition(Constants.Arm.INTAKE_POSITION_RIGHT);
+        state = ArmStates.INTAKE;
     }
 
     public void setDepositPosition(){
-
+        this.leftServo.setPosition(Constants.Arm.OUTTAKE_POSITION_LEFT);
+        this.rightServo.setPosition(Constants.Arm.OUTTAKE_POSITION_RIGHT);
+        state = ArmStates.DEPOSIT;
     }
 
     public void setAltDepositPosition(){
+        this.leftServo.setPosition(Constants.Arm.OUTTAKE_ALT_POSITION_LEFT);
+        this.rightServo.setPosition(Constants.Arm.OUTTAKE_ALT_POSITION_RIGHT);
+        state = ArmStates.DEPOSIT_ALT;
+    }
 
+    public ArmStates getState() {
+        return this.state;
     }
 }

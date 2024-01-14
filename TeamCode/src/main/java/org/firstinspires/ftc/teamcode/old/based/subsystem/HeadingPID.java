@@ -37,6 +37,7 @@ public class HeadingPID extends Drivetrain2 {
         maxError = 0;
     }
 
+    @Deprecated
     public void update(double leftX, double leftY, double rightX){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double heading = orientation.getYaw(AngleUnit.DEGREES);

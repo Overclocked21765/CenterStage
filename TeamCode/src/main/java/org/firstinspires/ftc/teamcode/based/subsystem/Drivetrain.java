@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.common.util.Algorithms.returnMecanu
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -18,6 +19,8 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 
 import org.firstinspires.ftc.teamcode.common.RobotHardwareConfig;
 
+import java.util.function.DoubleSupplier;
+
 @Config
 public class Drivetrain extends SubsystemBase{
     private DcMotorEx frontLeftMotor;
@@ -27,6 +30,8 @@ public class Drivetrain extends SubsystemBase{
 
     private IMU imu;
     private Telemetry telemetry;
+
+    private DoubleSupplier leftX, leftY, rightX;
 
     public static double kP = 0.015;
     public static double kI = 0;
@@ -81,7 +86,8 @@ public class Drivetrain extends SubsystemBase{
         );
     }
 
-    public void drive(double rotation, double strafe, double forwardPower, double heading, double scalar){
+
+    private void drive(double rotation, double strafe, double forwardPower, double heading, double scalar){
         double [] motorArraySpeeds = returnMecanumValues(rotation, strafe, forwardPower, heading, scalar);
 
         frontLeftMotor.setPower(motorArraySpeeds[0]);
@@ -90,60 +96,30 @@ public class Drivetrain extends SubsystemBase{
         backRightMotor.setPower(motorArraySpeeds[3]);
     }
 
-    public Drivetrain(double heading, HardwareMap hardwareMap, Telemetry telemetry){
+    public Drivetrain(double heading, HardwareMap hardwareMap, Telemetry telemetry, GamepadEx gamepad){
         super();
         targetHeading = heading;
         state = States.PID;
         firstTimeAfterStickRelease = false;
         controller = new PIDController(kP, kI, kD);
         maxError = 0;
+        this.leftX = gamepad::getLeftX;
+        this.leftY = gamepad::getLeftY;
+        this.rightX = gamepad::getRightX;
         this.init(hardwareMap, DcMotor.ZeroPowerBehavior.FLOAT, telemetry);
         this.resetYaw();
 
     }
 
-    @Deprecated
-    private void update(double leftX, double leftY, double rightX){
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double heading = orientation.getYaw(AngleUnit.DEGREES);
-        double error = heading - targetHeading;
-        if (error > maxAllowedError){
-            error -= 360;
-        } else if (error < -maxAllowedError){
-            error += 360;
-        }
-
-        if (Math.abs(error) > maxError){
-            maxError = Math.abs(error);
-        }
-
-        if (rightX == 0) {
-            if (firstTimeAfterStickRelease){
-                targetHeading = heading;
-                error = heading - targetHeading;
-                firstTimeAfterStickRelease = false;
-            }
-            if (Math.abs(error) > margin) {
-                drive(controller.calculate(heading, targetHeading), leftX, leftY, heading, Constants.Drive.DRIVE_POWER_MODIFIER);
-            } else {
-                drive(0, leftX, leftY, heading, Constants.Drive.DRIVE_POWER_MODIFIER);
-            }
-            telemetry.addData("Mode: ", "PID");
-        } else {
-            drive(rightX, leftX, leftY, heading, Constants.Drive.DRIVE_POWER_MODIFIER);
-            firstTimeAfterStickRelease = true;
-            telemetry.addData("Mode: ", "Rotating");
-        }
-
-
-        telemetry.addData("Heading: ", heading);
-        telemetry.addData("Error: ", error);
-        telemetry.addData("Target: ", targetHeading);
-        telemetry.addData("Max Error: ", maxError);
-
-    }
-
-    public void updateExperimental(double leftX, double leftY, double rightX){
+    /**
+     *
+     * @param leftX
+     * @param leftY
+     * @param rightX
+     *
+     * used for pid
+     */
+    public void pid(double leftX, double leftY, double rightX){
         telemetry.addLine("Experimental drive enabled");
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double heading = orientation.getYaw(AngleUnit.DEGREES);
@@ -185,6 +161,11 @@ public class Drivetrain extends SubsystemBase{
         telemetry.addData("Max Error: ", maxError);
 
     }
+
+    public void update(){
+        this.pid(-leftX.getAsDouble(), -leftY.getAsDouble(), -rightX.getAsDouble());
+    }
+
 
     public void resetYaw(){
         imu.resetYaw();
