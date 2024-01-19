@@ -11,10 +11,12 @@ public class ArmSubsystem extends SubsystemBase {
     public enum ArmStates{
         INTAKE,
         DEPOSIT,
-        DEPOSIT_ALT
+        DEPOSIT_ALT,
+        PASS
     }
 
     private ArmStates state;
+
     private Servo
         leftServo,
         rightServo;
@@ -46,6 +48,7 @@ public class ArmSubsystem extends SubsystemBase {
         this.rightServo.setPosition(Constants.Arm.OUTTAKE_ALT_POSITION_RIGHT);
         state = ArmStates.DEPOSIT_ALT;
     }
+
 
     public ArmStates getState() {
         return this.state;

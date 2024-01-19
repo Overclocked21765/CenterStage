@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class Constants {
     private Constants(){}
 
+    @Config
     public static class Drive{
         private Drive(){}
         public static double ROTATION_CONSTANT = 0.75;//how fast will the robot turn (as a percentage)
@@ -15,13 +19,17 @@ public class Constants {
         public static double SLOW_DRIVE_MODIFIER = 0.3; //a requested slower speed
     }
 
+    @Config
     public static class Lift{
         private Lift(){}
         public static double RESET_SPEED = -0.2;
 
         public static int GROUND_POSITION = 0;
+        public static int MAX = 2000;
+        public static int TICK_PER_REQ = 500;
     }
 
+    @Config
     public static class Arm{
         private Arm(){}
 
@@ -34,6 +42,7 @@ public class Constants {
 
     }
 
+    @Config
     public static class EndEffector {
         private EndEffector(){}
         public static double
@@ -47,7 +56,9 @@ public class Constants {
         public static double
             WRIST_INTAKE = 0.2,
             WRIST_STOW = 0.3,
-            WRIST_ALT_DEPOSIT = 0.4;
+            WRIST_DEPOSIT = 0.23,
+            WRIST_ALT_DEPOSIT = 0.4,
+            WRIST_PASSTRHOUGH = 0.25;
     }
 
     //XPS gang

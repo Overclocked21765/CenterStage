@@ -57,7 +57,15 @@ public class EndEffectorSubsystem extends SubsystemBase {
         wristServo.setPosition(Constants.EndEffector.WRIST_STOW);
     }
 
+    public void passThrough(){
+        wristServo.setPosition(Constants.EndEffector.WRIST_PASSTRHOUGH);
+    }
+
     public void moveToAltDeposit(){
         wristServo.setPosition(Constants.EndEffector.WRIST_ALT_DEPOSIT);
+    }
+
+    public void moveToDeposit(){
+        wristServo.setPosition(Constants.EndEffector.WRIST_DEPOSIT);
     }
 }

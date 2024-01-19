@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.based.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -35,6 +36,9 @@ public class LiftSubsystem extends SubsystemBase {
         this.leftMotor = hardwareMap.get(DcMotorEx.class, RobotHardwareConfig.Lift.LEFT_MOTOR_STRING);
         this.rightMotor = hardwareMap.get(DcMotorEx.class, RobotHardwareConfig.Lift.RIGHT_MOTOR_STRING);
 
+        this.leftMotor.setDirection(RobotHardwareConfig.Lift.LEFT_DIRECTION);
+        this.rightMotor.setDirection(RobotHardwareConfig.Lift.RIGHT_DIRECTION);
+
         this.controller = new PIDController(kP, kI, kD);
     }
 
@@ -59,15 +63,19 @@ public class LiftSubsystem extends SubsystemBase {
     }
 
     public void setTarget(int target){
-        if (this.target != target) this.target = target;
+        this.target = target;
+    }
+
+    public void move(double du){
+        int add = (int)(Math.round(du * Constants.Lift.TICK_PER_REQ));
+        if (this.target + add > Constants.Lift.MAX) this.target = Constants.Lift.MAX;
+        else if (this.target + add < Constants.Lift.GROUND_POSITION) this.target = Constants.Lift.GROUND_POSITION;
+        else this.target += add;
     }
 
     private void setPower(double power){
-        if (Double.compare(power, this.lastPower) != 0){
-            this.leftMotor.setPower(power);
-            this.rightMotor.setPower(power);
-            this.lastPower = power;
-        }
+        this.leftMotor.setPower(power);
+        this.rightMotor.setPower(power);
     }
 
     @Override
