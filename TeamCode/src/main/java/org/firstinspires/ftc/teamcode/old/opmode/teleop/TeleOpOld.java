@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.old.based.subsystem.BulkReader;
@@ -16,8 +17,9 @@ import org.firstinspires.ftc.teamcode.old.based.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.old.based.subsystem.HeadingPID;
 import org.firstinspires.ftc.teamcode.old.based.subsystem.LiftSubsystem;
 
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-public class TeleOp extends CommandOpMode {
+public class TeleOpOld extends CommandOpMode {
     public GamepadEx gamepad;
     public HeadingPID m_drive;
     public LiftSubsystem m_lift;

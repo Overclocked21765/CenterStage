@@ -129,10 +129,10 @@ public class Drivetrain2 {
     public void init(HardwareMap hwMap, DcMotor.ZeroPowerBehavior zeroPowerBehavior, Telemetry telemetry){
         this.telemetry = telemetry;
         //This sets up the motors it also tells us what the names of our motors are in a string format
-        frontLeftMotor = hwMap.get(DcMotorEx.class, "Front_Left");
-        frontRightMotor = hwMap.get(DcMotorEx.class, "Front_Right");
-        backLeftMotor = hwMap.get(DcMotorEx.class, "Back_Left");
-        backRightMotor = hwMap.get(DcMotorEx.class, "Back_Right");
+        frontLeftMotor = hwMap.get(DcMotorEx.class, "FL");
+        frontRightMotor = hwMap.get(DcMotorEx.class, "FR");
+        backLeftMotor = hwMap.get(DcMotorEx.class, "BL");
+        backRightMotor = hwMap.get(DcMotorEx.class, "BR");
         //This makes our motors run using encoders
         frontLeftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);

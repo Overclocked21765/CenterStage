@@ -12,7 +12,7 @@ public class ArmSubsystem extends SubsystemBase {
         INTAKE,
         DEPOSIT,
         DEPOSIT_ALT,
-        PASS
+        NAN
     }
 
     private ArmStates state;
@@ -49,8 +49,18 @@ public class ArmSubsystem extends SubsystemBase {
         state = ArmStates.DEPOSIT_ALT;
     }
 
+    public void setPositions(double l, double r){
+        this.leftServo.setPosition(l);
+        this.rightServo.setPosition(r);
+        state = ArmStates.NAN;
+    }
+
 
     public ArmStates getState() {
         return this.state;
+    }
+
+    public void setState(ArmStates state){
+        this.state = state;
     }
 }

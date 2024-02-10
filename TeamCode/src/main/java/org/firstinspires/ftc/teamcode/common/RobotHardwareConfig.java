@@ -37,7 +37,7 @@ public final class RobotHardwareConfig {
 
         public static DcMotorSimple.Direction
             LEFT_DIRECTION = DcMotorSimple.Direction.FORWARD,
-            RIGHT_DIRECTION = DcMotorSimple.Direction.FORWARD;
+            RIGHT_DIRECTION = DcMotorSimple.Direction.REVERSE;
 
 
 
@@ -47,8 +47,8 @@ public final class RobotHardwareConfig {
         public static final String LEFT_SERVO = "Arm Left";
         public static final String RIGHT_SERVO = "Arm Right";
 
-        public static Servo.Direction ARM_LEFT_DIRECTION = Servo.Direction.FORWARD;
-        public static Servo.Direction ARM_RIGHT_DIRECTION = Servo.Direction.REVERSE;
+        public static Servo.Direction ARM_LEFT_DIRECTION = Servo.Direction.REVERSE;
+        public static Servo.Direction ARM_RIGHT_DIRECTION = Servo.Direction.FORWARD;
     }
 
 
@@ -56,9 +56,10 @@ public final class RobotHardwareConfig {
     public static class EndEffector {
         public static final String CLAW_LEFT_STRING = "Claw Left";
         public static final String CLAW_RIGHT_STRING = "Claw Right";
+        public static final String WRIST_SERVO = "Wrist Servo";
 
         public static Servo.Direction CLAW_LEFT_DIRECTION = Servo.Direction.FORWARD;
-        public static Servo.Direction CLAW_RIGHT_DIRECTION = Servo.Direction.REVERSE;
+        public static Servo.Direction CLAW_RIGHT_DIRECTION = Servo.Direction.FORWARD;
 
     }
 }
