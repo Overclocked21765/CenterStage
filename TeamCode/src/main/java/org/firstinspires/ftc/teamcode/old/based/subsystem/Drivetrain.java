@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.old.based.subsystem;
 
 import static org.firstinspires.ftc.teamcode.common.util.Algorithms.returnMecanumValues;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -15,6 +14,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.based.subsystem.HeadingPID;
 import org.firstinspires.ftc.teamcode.common.Constants;
 
 @Deprecated

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.old.based.subsystem.HeadingPID;
+import org.firstinspires.ftc.teamcode.based.subsystem.HeadingPID;
 
 @TeleOp
 @Disabled

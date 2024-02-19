@@ -27,6 +27,9 @@ public class Constants {
         public static int GROUND_POSITION = 0;
         public static int MAX = 2000;
         public static int TICK_PER_REQ = 250;
+
+        public static int RED_ZONE = 200;
+        public static int TOLERANCE = 12;
     }
 
     @Config

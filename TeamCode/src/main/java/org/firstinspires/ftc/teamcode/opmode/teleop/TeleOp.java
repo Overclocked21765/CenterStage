@@ -4,10 +4,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.FunctionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.StartEndCommand;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -18,7 +18,8 @@ import org.firstinspires.ftc.teamcode.based.subsystem.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.based.subsystem.BulkReader;
 import org.firstinspires.ftc.teamcode.based.subsystem.EndEffectorSubsystem;
 import org.firstinspires.ftc.teamcode.based.subsystem.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.old.based.subsystem.HeadingPID;
+import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.based.subsystem.HeadingPID;
 
 @Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -33,11 +34,11 @@ public class TeleOp extends CommandOpMode {
 
     private boolean yPressed;
 
-    public static long wristWaitArmUp = 500;
-    public static long timeReachDeposit = 1500;
+    public static long timeReachDeposit = 1200;
+
     public static long timeWristStraighten = 500;
-    public static long timeArmPassSlides = 1000;
-    public static long timeThroughSlidesToArmInBetween = 500;
+    public static long timeDepositToEffector = 1000;
+    public static long timeEffectorTo02 = 200;
 
     @Override
     public void initialize() {
@@ -77,16 +78,41 @@ public class TeleOp extends CommandOpMode {
 
         m_driveController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                 new SequentialCommandGroup(
+                        new FunctionalCommand(
+                                () -> m_lift.setTarget(Constants.Lift.GROUND_POSITION),
+                                () -> {},
+                                (interrupted) -> {},
+                                () -> m_lift.getCurrentPosition() <= Constants.Lift.RED_ZONE,
+                                m_lift
+                        ),
                         new InstantCommand(() -> m_effector.passThrough(), m_effector),
                         new WaitCommand(timeWristStraighten),
                         new InstantCommand(() -> m_effector.grab(), m_effector),
                         new InstantCommand(() -> m_arm.setPositions(0.2, 0.2), m_arm),
-                        new WaitCommand(timeArmPassSlides),
+                        new WaitCommand(timeDepositToEffector),
                         new InstantCommand(() -> m_effector.moveToIntake(), m_effector),
-                        new WaitCommand(timeThroughSlidesToArmInBetween),
+                        new WaitCommand(timeEffectorTo02),
                         new InstantCommand(() -> m_arm.setIntakePosition(), m_arm)
                 )
         );
+
+//        m_driveController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
+//                new SequentialCommandGroup(
+//                        new FunctionalCommand(
+//                                () -> m_lift.setTarget(Constants.Lift.GROUND_POSITION),
+//                                () -> {},
+//                                (interrupted) -> {},
+//                                () -> m_lift.getCurrentPosition() <= Constants.Lift.RED_ZONE,
+//                                m_lift
+//                        ),
+//                        new InstantCommand(() -> m_effector.passThrough(), m_effector),
+//                        new WaitCommand(timeWristStraighten),
+//                        new InstantCommand(() -> m_effector.grab(), m_effector),
+//                        new InstantCommand(() -> m_arm.setIntakePosition(), m_arm),
+//                        new WaitCommand(timeThroughSlidesToArmInBetween),
+//                        new InstantCommand(() -> m_effector.moveToIntake(), m_effector)
+//                )
+//        );
 
         m_driveController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
                 new SequentialCommandGroup(
@@ -114,36 +140,46 @@ public class TeleOp extends CommandOpMode {
                 new InstantCommand(() -> m_lift.reset())
         );
 
-        Trigger rightTrigger = new Trigger(
-                () -> m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.05
+//        Trigger rightTrigger = new Trigger(
+//                () -> m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.02
+//        );
+//
+//        Trigger leftTrigger = new Trigger(
+//                () -> m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.02
+//        );
+
+        Trigger triggers = new Trigger(
+                () -> m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.02 || m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.02
         );
 
-        Trigger leftTrigger = new Trigger(
-                () -> m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.05
-        );
 
 
+//        rightTrigger.whenActive(
+//                new RunCommand(
+//                        () -> m_lift.move(m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)),
+//                        m_lift
+//                )
+//        ).whenInactive(
+//                new InstantCommand(
+//                        () -> m_lift.move(0),
+//                        m_lift
+//                )
+//        );
+//
+//        leftTrigger.whenActive(
+//                new RunCommand(
+//                        () -> m_lift.move(m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)), m_lift
+//                )
+//        ).whenInactive(
+//                new InstantCommand(
+//                        () -> m_lift.move(0), m_lift
+//                )
+//        );
 
-        rightTrigger.whenActive(
-                new RunCommand(
-                        () -> m_lift.move(m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)),
-                        m_lift
-                )
+        triggers.whenActive(
+                new InstantCommand(() -> m_lift.moveManually(m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)), m_lift)
         ).whenInactive(
-                new InstantCommand(
-                        () -> m_lift.move(0),
-                        m_lift
-                )
-        );
-
-        leftTrigger.whenActive(
-                new RunCommand(
-                        () -> m_lift.move(m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)), m_lift
-                )
-        ).whenInactive(
-                new InstantCommand(
-                        () -> m_lift.move(0), m_lift
-                )
+                new InstantCommand(() -> m_lift.stopMovement(), m_lift)
         );
 
         m_driveController.getGamepadButton(GamepadKeys.Button.X).toggleWhenPressed(

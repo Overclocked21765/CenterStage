@@ -31,6 +31,7 @@ public class LiftSubsystem extends SubsystemBase {
     private double lastPower;
 
     private boolean resetting = false;
+    private boolean triggerMoving = false;
 
     private Telemetry telemetry;
 
@@ -95,6 +96,21 @@ public class LiftSubsystem extends SubsystemBase {
         }
     }
 
+    public void moveManually(double speed){
+        if (this.currentPosition < Constants.Lift.MAX && this.currentPosition > Constants.Lift.GROUND_POSITION){
+            triggerMoving = true;
+            this.setPower(speed);
+        } else {
+            triggerMoving = false;
+        }
+    }
+
+    public void stopMovement(){
+        triggerMoving = false;
+        this.target = currentPosition;
+    }
+
+
     private void setPower(double power){
         this.leftMotor.setPower(power);
         this.rightMotor.setPower(power);
@@ -106,7 +122,7 @@ public class LiftSubsystem extends SubsystemBase {
 
         this.controller.setPID(kP, kI, kD);
 
-        if (!resetting){
+        if (!resetting && !triggerMoving){
             double power = controller.calculate(this.currentPosition, this.target);
             if (this.telemetry != null) telemetry.addData("lift power: ", power);
             this.setPower(power + kF);
