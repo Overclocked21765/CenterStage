@@ -59,7 +59,7 @@ public class Constants {
         public static double
             WRIST_INTAKE = 0.2,
             WRIST_STOW = 0.1,
-            WRIST_DEPOSIT = 0.01,
+            WRIST_DEPOSIT = 0,
             WRIST_ALT_DEPOSIT = 0.55,
             WRIST_PASSTRHOUGH = 0.43;
     }

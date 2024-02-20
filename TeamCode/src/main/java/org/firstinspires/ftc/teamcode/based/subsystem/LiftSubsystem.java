@@ -114,20 +114,22 @@ public class LiftSubsystem extends SubsystemBase {
     private void setPower(double power){
         this.leftMotor.setPower(power);
         this.rightMotor.setPower(power);
+        this.telemetry.addData("lift power: ", power);
     }
 
     @Override
     public void periodic(){
+        telemetry.addLine("\n--Lift---------------------------------");
         this.currentPosition = this.leftMotor.getCurrentPosition();
 
         this.controller.setPID(kP, kI, kD);
 
         if (!resetting && !triggerMoving){
             double power = controller.calculate(this.currentPosition, this.target);
-            if (this.telemetry != null) telemetry.addData("lift power: ", power);
             this.setPower(power + kF);
         }
 
+        telemetry.addData("triggerMoving?: ", triggerMoving);
         this.telemetry.addData("target: ", this.target);
     }
 

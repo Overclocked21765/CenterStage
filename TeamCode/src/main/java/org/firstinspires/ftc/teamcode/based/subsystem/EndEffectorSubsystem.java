@@ -115,6 +115,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic(){
+        telemetry.addLine("\n---End Effector-----------------------");
         telemetry.addData("left state: ", this.leftState);
         telemetry.addData("right state: ", this.rightState);
 

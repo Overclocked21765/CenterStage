@@ -177,7 +177,13 @@ public class TeleOp extends CommandOpMode {
 //        );
 
         triggers.whenActive(
-                new InstantCommand(() -> m_lift.moveManually(m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)), m_lift)
+                new RunCommand(
+                        () -> m_lift.move(
+                                m_driveController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) -
+                                        m_driveController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)
+                        ),
+                        m_lift
+                )
         ).whenInactive(
                 new InstantCommand(() -> m_lift.stopMovement(), m_lift)
         );
