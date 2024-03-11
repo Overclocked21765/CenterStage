@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.common.Globals;
 import org.firstinspires.ftc.teamcode.common.RobotHardwareConfig;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -28,7 +29,7 @@ public class ArmSubsystem extends SubsystemBase {
         this.leftServo.setDirection(RobotHardwareConfig.Arm.ARM_LEFT_DIRECTION);
         this.rightServo.setDirection(RobotHardwareConfig.Arm.ARM_RIGHT_DIRECTION);
 
-        state = ArmStates.INTAKE;
+        state = Globals.ARM_STATE;
     }
 
     public void setIntakePosition(){
@@ -62,5 +63,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void setState(ArmStates state){
         this.state = state;
+    }
+
+    @Override
+    public void periodic(){
+        Globals.ARM_STATE = this.state;
     }
 }

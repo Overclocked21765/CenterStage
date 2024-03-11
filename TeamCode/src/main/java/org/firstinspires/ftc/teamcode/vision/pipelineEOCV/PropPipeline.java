@@ -13,7 +13,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class PropPipeline implements VisionProcessor {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     public static int redLeftX = (int) (815);
     public static int redLeftY = (int) (550);
     public static int redCenterX = (int) (1365);
@@ -113,11 +113,11 @@ public class PropPipeline implements VisionProcessor {
         if (leftColor > threshold && (left.val[0] + left.val[1] + left.val[2] - left.val[idx] < left.val[idx])) {
             // left zone has it
             location = Location.LEFT;
-            Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255), 10);
+            Imgproc.rectangle(frame, leftZoneArea, new Scalar(0, 255, 0), 10);
         } else if (centerColor > threshold && (center.val[0] + center.val[1] + center.val[2] - center.val[idx] < center.val[idx])) {
             // center zone has it
             location = Location.CENTER;
-            Imgproc.rectangle(frame, centerZoneArea, new Scalar(255, 255, 255), 10);
+            Imgproc.rectangle(frame, centerZoneArea, new Scalar(0, 255, 0), 10);
         } else {
             // right zone has it
             location = Location.RIGHT;

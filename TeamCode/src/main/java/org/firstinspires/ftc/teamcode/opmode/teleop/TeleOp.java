@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.FunctionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.based.subsystem.EndEffectorSubsystem;
 import org.firstinspires.ftc.teamcode.based.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.based.subsystem.HeadingPID;
+import org.firstinspires.ftc.teamcode.common.Globals;
 
 @Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -42,6 +44,7 @@ public class TeleOp extends CommandOpMode {
 
     @Override
     public void initialize() {
+        CommandScheduler.getInstance().reset();
         this.telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), this.telemetry);
 
         m_driveController = new GamepadEx(gamepad1);
@@ -213,7 +216,11 @@ public class TeleOp extends CommandOpMode {
          */
 
         drive.resetYaw();
-        m_arm.setIntakePosition();
+        if (Globals.ARM_STATE == ArmSubsystem.ArmStates.INTAKE){
+            m_arm.setIntakePosition();
+        } else if (Globals.ARM_STATE == ArmSubsystem.ArmStates.DEPOSIT){
+            m_arm.setDepositPosition();
+        }
 
         schedule(new RunCommand(telemetry::update));
     }
