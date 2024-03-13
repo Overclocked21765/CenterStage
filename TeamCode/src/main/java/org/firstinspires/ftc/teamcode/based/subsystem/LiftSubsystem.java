@@ -129,6 +129,8 @@ public class LiftSubsystem extends SubsystemBase {
             this.setPower(power + kF);
         }
 
+        telemetry.addData("current position: ", this.currentPosition);
+
         telemetry.addData("triggerMoving?: ", triggerMoving);
         this.telemetry.addData("target: ", this.target);
     }

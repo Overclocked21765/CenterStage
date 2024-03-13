@@ -19,6 +19,7 @@ public class LoopTimer extends ElapsedTime {
         this.reset();
         maxLoop = Math.max(currentLoop, maxLoop);
         minLoop = (minLoop == 0) ? currentLoop : Math.min(currentLoop, minLoop);
+        telemetry.addLine("\n--------Loop times---------------------");
         telemetry.addData("Current loop: ", currentLoop);
         telemetry.addData("Max loop: ", maxLoop);
         telemetry.addData("Min loop: ", minLoop);

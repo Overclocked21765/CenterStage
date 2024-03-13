@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.FunctionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.based.subsystem.BulkReader;
 import org.firstinspires.ftc.teamcode.based.subsystem.EndEffectorSubsystem;
 import org.firstinspires.ftc.teamcode.based.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.common.util.LoopTimer;
 import org.firstinspires.ftc.teamcode.opmode.teleop.TeleOp;
 import org.firstinspires.ftc.teamcode.rr.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
@@ -37,6 +39,8 @@ public class RedRightAuto extends LinearOpMode {
     private EndEffectorSubsystem m_effector;
     private PropPipelineStreamable processor;
     private VisionPortal portal;
+
+    private LoopTimer loopTimer;
 
     private TrajectorySequence leftTrajectory;
     private TrajectorySequence middleTrajectory;
@@ -93,8 +97,10 @@ public class RedRightAuto extends LinearOpMode {
         drive.setPoseEstimate(START_POSE);
 
 
-
-        waitForStart();
+        while (opModeInInit()){
+            m_lift.periodic();
+            telemetry.update();
+        }
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
@@ -107,7 +113,7 @@ public class RedRightAuto extends LinearOpMode {
                                         new SequentialCommandGroup(
                                                 new InstantCommand(() -> m_arm.setDepositPosition(), m_arm),
                                                 new InstantCommand(() -> m_effector.passThrough(), m_effector),
-                                                new WaitCommand(TeleOp.timeReachDeposit),
+                                                new WaitCommand(TeleOp.timeReachDeposit + 200),
                                                 new InstantCommand(() -> m_effector.moveToDeposit(), m_effector),
                                                 new InstantCommand(() -> m_lift.setTarget(300), m_lift)
                                         )
@@ -117,14 +123,33 @@ public class RedRightAuto extends LinearOpMode {
                         new InstantCommand(() -> m_effector.release()),
                         new WaitCommand(WAIT_FOR_RELEASE_TIME),
                         new FollowPathCommand(drive, leftParkTrajectory),
-                        new InstantCommand(() -> m_lift.setTarget(Constants.Lift.GROUND_POSITION), m_lift)
+                        new SequentialCommandGroup(
+                                new FunctionalCommand(
+                                        () -> m_lift.setTarget(Constants.Lift.GROUND_POSITION),
+                                        () -> {},
+                                        (interrupted) -> {},
+                                        () -> m_lift.getCurrentPosition() <= Constants.Lift.RED_ZONE,
+                                        m_lift
+                                ),
+                                new InstantCommand(() -> m_effector.passThrough(), m_effector),
+                                new WaitCommand(TeleOp.timeWristStraighten),
+                                new InstantCommand(() -> m_effector.grab(), m_effector),
+                                new InstantCommand(() -> m_arm.setPositions(0.2, 0.2), m_arm),
+                                new WaitCommand(TeleOp.timeDepositToEffector),
+                                new InstantCommand(() -> m_effector.moveToIntake(), m_effector),
+                                new WaitCommand(TeleOp.timeEffectorTo02),
+                                new InstantCommand(() -> m_arm.setIntakePosition(), m_arm)
+                        )
                 )
         );
 
+        loopTimer = new LoopTimer(telemetry);
+
         while (opModeIsActive() && !isStopRequested()){
             CommandScheduler.getInstance().run();
+            loopTimer.updateLoop();
             telemetry.update();
         }
-
+        loopTimer.endLoop();
     }
 }

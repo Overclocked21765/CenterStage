@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.based.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.based.subsystem.HeadingPID;
 import org.firstinspires.ftc.teamcode.common.Globals;
+import org.firstinspires.ftc.teamcode.common.util.LoopTimer;
 
 @Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -41,6 +42,8 @@ public class TeleOp extends CommandOpMode {
     public static long timeWristStraighten = 500;
     public static long timeDepositToEffector = 1000;
     public static long timeEffectorTo02 = 200;
+
+    private LoopTimer timer;
 
     @Override
     public void initialize() {
@@ -222,7 +225,9 @@ public class TeleOp extends CommandOpMode {
             m_arm.setDepositPosition();
         }
 
+
         schedule(new RunCommand(telemetry::update));
+        timer = new LoopTimer(telemetry);
     }
 
     @Override
@@ -235,5 +240,7 @@ public class TeleOp extends CommandOpMode {
             drive.resetYaw();
         }
         yPressed = gamepad1.y;
+
+        timer.updateLoop();
     }
 }
