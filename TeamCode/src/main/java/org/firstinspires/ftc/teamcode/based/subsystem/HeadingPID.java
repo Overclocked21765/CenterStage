@@ -5,8 +5,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.based.subsystem.Drivetrain2;
-import org.firstinspires.ftc.teamcode.common.Constants.Drive;
+import org.firstinspires.ftc.teamcode.common.Constants.ConstantsDrive;
 
 @Config
 public class HeadingPID extends Drivetrain2 {
@@ -60,13 +59,13 @@ public class HeadingPID extends Drivetrain2 {
                 firstTimeAfterStickRelease = false;
             }
             if (Math.abs(error) > margin) {
-                drive(controller.calculate(heading, targetHeading), leftX, leftY, heading, Drive.DRIVE_POWER_MODIFIER);
+                drive(controller.calculate(heading, targetHeading), leftX, leftY, heading, ConstantsDrive.DRIVE_POWER_MODIFIER);
             } else {
-                drive(0, leftX, leftY, heading, Drive.DRIVE_POWER_MODIFIER);
+                drive(0, leftX, leftY, heading, ConstantsDrive.DRIVE_POWER_MODIFIER);
             }
             telemetry.addData("Mode: ", "PID");
         } else {
-            drive(rightX, leftX, leftY, heading, Drive.DRIVE_POWER_MODIFIER);
+            drive(rightX, leftX, leftY, heading, ConstantsDrive.DRIVE_POWER_MODIFIER);
             firstTimeAfterStickRelease = true;
             telemetry.addData("Mode: ", "Rotating");
         }
@@ -104,13 +103,13 @@ public class HeadingPID extends Drivetrain2 {
                 firstTimeAfterStickRelease = false;
             }
             if (Math.abs(error) > margin) {
-                drive(controller.calculate(heading, targetHeading), leftX, leftY, heading, Drive.DRIVE_POWER_MODIFIER);
+                drive(controller.calculate(heading, targetHeading), leftX, leftY, heading, ConstantsDrive.DRIVE_POWER_MODIFIER);
             } else {
-                drive(0, leftX, leftY, heading, Drive.DRIVE_POWER_MODIFIER);
+                drive(0, leftX, leftY, heading, ConstantsDrive.DRIVE_POWER_MODIFIER);
             }
             telemetry.addData("Mode: ", "PID");
         } else {
-            drive(rightX, leftX, leftY, heading, Drive.DRIVE_POWER_MODIFIER);
+            drive(rightX, leftX, leftY, heading, ConstantsDrive.DRIVE_POWER_MODIFIER);
             firstTimeAfterStickRelease = true;
             telemetry.addData("Mode: ", "Rotating");
         }

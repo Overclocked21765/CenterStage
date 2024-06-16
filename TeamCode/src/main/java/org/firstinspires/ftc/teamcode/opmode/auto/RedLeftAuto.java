@@ -31,9 +31,9 @@ import org.firstinspires.ftc.teamcode.vision.nonEOCV.PropPipelineStreamable;
 import org.firstinspires.ftc.teamcode.vision.pipelineEOCV.PropPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-@Autonomous(name = "Red Right Auto")
+@Autonomous(name = "Red Left Auto")
 @Config
-public class RedRightAuto extends LinearOpMode {
+public class RedLeftAuto extends LinearOpMode {
     private BulkReader reader;
     private ArmSubsystem m_arm;
     private LiftSubsystem m_lift;
@@ -68,17 +68,20 @@ public class RedRightAuto extends LinearOpMode {
     public static int WAIT_FOR_RELEASE_TIME = 500;
 
 
-    public static Pose2d START_POSE = new Pose2d(12, -65, Math.toRadians(-90));
+    public static Pose2d START_POSE = new Pose2d(-36, -65, Math.toRadians(-90));
 
     public static Pose2d ZONE_3 = new Pose2d(53, -42.3, 0);
     public static Pose2d ZONE_2 = new Pose2d(53, -36.4, 0);
     public static Pose2d ZONE_1 = new Pose2d(53, -29.8, 0);
 
-    public static Pose2d PARK = new Pose2d(52, -12, 0);
+    public static Pose2d PARK = new Pose2d(52.6, -12, 0);
 
-    public static Pose2d LEFT_SCORE = new Pose2d(12, -32, Math.toRadians(0));
-    public static Pose2d MID_SCORE = new Pose2d(12, -36, Math.toRadians(-90));
-    public static Pose2d RIGHT_SCORE = new Pose2d(23.5, -41, Math.toRadians(-90));
+    public static Pose2d ROT_POINT = new Pose2d(-36, -12, 0);
+    public static Pose2d TANGENTIAL_POINT = new Pose2d(12, -12, 0);
+
+    public static Pose2d LEFT_SCORE = new Pose2d(-36, -32, Math.toRadians(0));
+    public static Pose2d MID_SCORE = new Pose2d(-36, -36, Math.toRadians(-90));
+    public static Pose2d RIGHT_SCORE = new Pose2d(-36, -41, Math.toRadians(180));
 
     @Override
     public void runOpMode() {
@@ -117,6 +120,8 @@ public class RedRightAuto extends LinearOpMode {
                 .build();
 
         leftBackdropTrajectory = drive.trajectorySequenceBuilder(leftTrajectory.end())
+                .lineToLinearHeading(ROT_POINT)
+                .lineToLinearHeading(TANGENTIAL_POINT)
                 .lineToLinearHeading(ZONE_1)
                 .build();
 
@@ -133,7 +138,9 @@ public class RedRightAuto extends LinearOpMode {
                 .build();
 
         middleBackdropTrajectory = drive.trajectorySequenceBuilder(middleTrajectory.end())
-                        .lineToLinearHeading(ZONE_2)
+                        .lineToLinearHeading(ROT_POINT)
+                .splineTo(new Vector2d(TANGENTIAL_POINT.getX(), TANGENTIAL_POINT.getY()), 0)
+                .splineToSplineHeading(ZONE_2, Math.toRadians(-90))
                                 .build();
 
         middleParkTrajectory = drive.trajectorySequenceBuilder(middleBackdropTrajectory.end())
@@ -148,8 +155,10 @@ public class RedRightAuto extends LinearOpMode {
                                 .build();
 
         rightBackdropTrajectory = drive.trajectorySequenceBuilder(rightTrajectory.end())
-                                .lineToLinearHeading(ZONE_3)
-                                        .build();
+                .lineToLinearHeading(ROT_POINT)
+                .splineTo(new Vector2d(TANGENTIAL_POINT.getX(), TANGENTIAL_POINT.getY()), 0)
+                .splineToSplineHeading(ZONE_3, Math.toRadians(-90))
+                .build();
 
         rightParkTrajectory = drive.trajectorySequenceBuilder(rightBackdropTrajectory.end())
                 .lineToLinearHeading(PARK)
@@ -205,8 +214,14 @@ public class RedRightAuto extends LinearOpMode {
                                                 new InstantCommand(() -> m_arm.setDepositPosition(), m_arm),
                                                 new InstantCommand(() -> m_effector.passThrough(), m_effector),
                                                 new WaitCommand(TeleOp.timeReachDeposit + 500),
-                                                new InstantCommand(() -> m_effector.moveToDeposit(), m_effector),
-                                                new InstantCommand(() -> m_lift.setTarget(Constants.ConstantsLift.AUTO_BACKDROP_HEIGHT), m_lift)
+                                                new InstantCommand(() -> m_effector.moveToDeposit(), m_effector)
+                                        ),
+                                        new FunctionalCommand(
+                                                () -> {},
+                                                () -> {},
+                                                (interrupted) -> {if (!interrupted) m_lift.setTarget(Constants.ConstantsLift.AUTO_BACKDROP_HEIGHT);},
+                                                () -> drive.getPoseEstimate().getX() > 12,
+                                                m_lift
                                         )
                                 ),
                                 new FollowPathCommand(drive, selectedTrajectoryBackdrop)
@@ -215,6 +230,7 @@ public class RedRightAuto extends LinearOpMode {
                         new WaitCommand(WAIT_FOR_RELEASE_TIME),
                         new InstantCommand(() -> m_lift.setTarget(Constants.ConstantsLift.GROUND_POSITION)),
                         new WaitCommand(Constants.ConstantsAuto.TIME_WAIT_BEFORE_MOVE),
+
                         new FollowPathCommand(drive, parkTrajectory),
                         new SequentialCommandGroup(
                                 new FunctionalCommand(

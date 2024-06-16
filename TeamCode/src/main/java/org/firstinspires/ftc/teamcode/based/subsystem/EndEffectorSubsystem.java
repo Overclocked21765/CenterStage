@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.based.subsystem;
 
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.RobotHardwareConfig;
@@ -44,12 +41,12 @@ public class EndEffectorSubsystem extends SubsystemBase {
     }
 
     public void grabLeft(){
-        this.leftServo.setPosition(Constants.EndEffector.LEFT_CLOSE);
+        this.leftServo.setPosition(Constants.ConstantsEndEffector.LEFT_CLOSE);
         this.leftState = EffectorStates.CLOSED;
     }
 
     public void grabRight(){
-        this.rightServo.setPosition(Constants.EndEffector.RIGHT_CLOSE);
+        this.rightServo.setPosition(Constants.ConstantsEndEffector.RIGHT_CLOSE);
         this.rightState = EffectorStates.CLOSED;
     }
 
@@ -59,12 +56,12 @@ public class EndEffectorSubsystem extends SubsystemBase {
     }
 
     public void releaseLeft(){
-        this.leftServo.setPosition(Constants.EndEffector.LEFT_OPEN);
+        this.leftServo.setPosition(Constants.ConstantsEndEffector.LEFT_OPEN);
         this.leftState = EffectorStates.OPEN;
     }
 
     public void releaseRight(){
-        this.rightServo.setPosition(Constants.EndEffector.RIGHT_OPEN);
+        this.rightServo.setPosition(Constants.ConstantsEndEffector.RIGHT_OPEN);
         this.rightState = EffectorStates.OPEN;
     }
 
@@ -74,23 +71,23 @@ public class EndEffectorSubsystem extends SubsystemBase {
     }
 
     public void moveToIntake(){
-        wristServo.setPosition(Constants.EndEffector.WRIST_INTAKE);
+        wristServo.setPosition(Constants.ConstantsEndEffector.WRIST_INTAKE);
     }
 
     public void stow(){
-        wristServo.setPosition(Constants.EndEffector.WRIST_STOW);
+        wristServo.setPosition(Constants.ConstantsEndEffector.WRIST_STOW);
     }
 
     public void passThrough(){
-        wristServo.setPosition(Constants.EndEffector.WRIST_PASSTRHOUGH);
+        wristServo.setPosition(Constants.ConstantsEndEffector.WRIST_PASSTRHOUGH);
     }
 
     public void moveToAltDeposit(){
-        wristServo.setPosition(Constants.EndEffector.WRIST_ALT_DEPOSIT);
+        wristServo.setPosition(Constants.ConstantsEndEffector.WRIST_ALT_DEPOSIT);
     }
 
     public void moveToDeposit(){
-        wristServo.setPosition(Constants.EndEffector.WRIST_DEPOSIT);
+        wristServo.setPosition(Constants.ConstantsEndEffector.WRIST_DEPOSIT);
     }
 
     public void updateClaw(){

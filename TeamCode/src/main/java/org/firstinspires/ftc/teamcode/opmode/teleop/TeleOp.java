@@ -85,16 +85,16 @@ public class TeleOp extends CommandOpMode {
         m_driveController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                 new SequentialCommandGroup(
                         new FunctionalCommand(
-                                () -> m_lift.setTarget(Constants.Lift.GROUND_POSITION),
+                                () -> m_lift.setTarget(Constants.ConstantsLift.GROUND_POSITION),
                                 () -> {},
                                 (interrupted) -> {},
-                                () -> m_lift.getCurrentPosition() <= Constants.Lift.RED_ZONE,
+                                () -> m_lift.getCurrentPosition() <= Constants.ConstantsLift.RED_ZONE,
                                 m_lift
                         ),
                         new InstantCommand(() -> m_effector.passThrough(), m_effector),
                         new WaitCommand(timeWristStraighten),
                         new InstantCommand(() -> m_effector.grab(), m_effector),
-                        new InstantCommand(() -> m_arm.setPositions(0.2, 0.2), m_arm),
+                        new InstantCommand(() -> m_arm.setPositions(0.4, 0.4), m_arm),
                         new WaitCommand(timeDepositToEffector),
                         new InstantCommand(() -> m_effector.moveToIntake(), m_effector),
                         new WaitCommand(timeEffectorTo02),
@@ -195,15 +195,14 @@ public class TeleOp extends CommandOpMode {
         );
 
         m_driveController.getGamepadButton(GamepadKeys.Button.X).toggleWhenPressed(
-                new SequentialCommandGroup(
-                        new InstantCommand(() -> m_arm.setPositions(0.25, 0.25), m_arm),
-                        new InstantCommand(() -> m_arm.setState(ArmSubsystem.ArmStates.NAN), m_arm)
-                ),
-                new SequentialCommandGroup(
-                        new InstantCommand(() -> m_arm.setIntakePosition(), m_arm),
-                        new InstantCommand(() -> m_arm.setState(ArmSubsystem.ArmStates.INTAKE), m_arm),
-                        new InstantCommand(() -> m_effector.moveToIntake(), m_effector)
-                )
+            new InstantCommand(() -> {
+                if (m_arm.getState() == ArmSubsystem.ArmStates.NAN) {
+                    m_effector.moveToIntake();
+                    m_arm.setIntakePosition();
+                } else if (m_arm.getState() == ArmSubsystem.ArmStates.INTAKE){
+                    m_arm.setPositions(0.25, 0.25);
+                }
+            })
 
         );
 

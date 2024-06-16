@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.FunctionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -31,9 +30,9 @@ import org.firstinspires.ftc.teamcode.vision.nonEOCV.PropPipelineStreamable;
 import org.firstinspires.ftc.teamcode.vision.pipelineEOCV.PropPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-@Autonomous(name = "Red Right Auto")
+@Autonomous(name = "Blue Left Auto")
 @Config
-public class RedRightAuto extends LinearOpMode {
+public class BlueLeftAuto extends LinearOpMode {
     private BulkReader reader;
     private ArmSubsystem m_arm;
     private LiftSubsystem m_lift;
@@ -66,19 +65,20 @@ public class RedRightAuto extends LinearOpMode {
 
 
     public static int WAIT_FOR_RELEASE_TIME = 500;
+    public static int AUTO_HEIGHT = 400;
 
 
-    public static Pose2d START_POSE = new Pose2d(12, -65, Math.toRadians(-90));
+    public static Pose2d START_POSE = new Pose2d(12, 65, Math.toRadians(90));
 
-    public static Pose2d ZONE_3 = new Pose2d(53, -42.3, 0);
-    public static Pose2d ZONE_2 = new Pose2d(53, -36.4, 0);
-    public static Pose2d ZONE_1 = new Pose2d(53, -29.8, 0);
+    public static Pose2d ZONE_1 = new Pose2d(53, 42.3, 0);
+    public static Pose2d ZONE_2 = new Pose2d(53, 36.4, 0);
+    public static Pose2d ZONE_3 = new Pose2d(53, 29.8, 0);
 
-    public static Pose2d PARK = new Pose2d(52, -12, 0);
+    public static Pose2d PARK = new Pose2d(52.6, 12, 0);
 
-    public static Pose2d LEFT_SCORE = new Pose2d(12, -32, Math.toRadians(0));
-    public static Pose2d MID_SCORE = new Pose2d(12, -36, Math.toRadians(-90));
-    public static Pose2d RIGHT_SCORE = new Pose2d(23.5, -41, Math.toRadians(-90));
+    public static Pose2d LEFT_SCORE = new Pose2d(12, 32, Math.toRadians(0));
+    public static Pose2d MID_SCORE = new Pose2d(12, 36, Math.toRadians(90));
+    public static Pose2d RIGHT_SCORE = new Pose2d(22.3, 41, Math.toRadians(90));
 
     @Override
     public void runOpMode() {
@@ -93,7 +93,7 @@ public class RedRightAuto extends LinearOpMode {
         m_lift = new LiftSubsystem(hardwareMap, telemetry);
         m_effector = new EndEffectorSubsystem(hardwareMap, telemetry);
 
-        processor = new PropPipelineStreamable(telemetry, PropPipeline.Location.RED);
+        processor = new PropPipelineStreamable(telemetry, PropPipeline.Location.BLUE);
 
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
@@ -122,7 +122,7 @@ public class RedRightAuto extends LinearOpMode {
 
         leftParkTrajectory = drive.trajectorySequenceBuilder(leftBackdropTrajectory.end())
                 .lineToLinearHeading(PARK)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .build();
 
 
@@ -138,7 +138,7 @@ public class RedRightAuto extends LinearOpMode {
 
         middleParkTrajectory = drive.trajectorySequenceBuilder(middleBackdropTrajectory.end())
                 .lineToLinearHeading(PARK)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .build();
 
 
@@ -153,7 +153,7 @@ public class RedRightAuto extends LinearOpMode {
 
         rightParkTrajectory = drive.trajectorySequenceBuilder(rightBackdropTrajectory.end())
                 .lineToLinearHeading(PARK)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .build();
 
 
@@ -176,7 +176,7 @@ public class RedRightAuto extends LinearOpMode {
         portal.stopStreaming();
 
         switch (propLocation){
-            case LEFT:
+            case RIGHT:
                 selectedTrajectoryBackdrop = leftBackdropTrajectory;
                 selectedTrajectoryStart = leftTrajectory;
                 parkTrajectory = leftParkTrajectory;
@@ -186,7 +186,7 @@ public class RedRightAuto extends LinearOpMode {
                 selectedTrajectoryStart = middleTrajectory;
                 parkTrajectory = middleParkTrajectory;
                 break;
-            case RIGHT:
+            case LEFT:
                 selectedTrajectoryBackdrop = rightBackdropTrajectory;
                 selectedTrajectoryStart = rightTrajectory;
                 parkTrajectory = rightParkTrajectory;
@@ -215,6 +215,7 @@ public class RedRightAuto extends LinearOpMode {
                         new WaitCommand(WAIT_FOR_RELEASE_TIME),
                         new InstantCommand(() -> m_lift.setTarget(Constants.ConstantsLift.GROUND_POSITION)),
                         new WaitCommand(Constants.ConstantsAuto.TIME_WAIT_BEFORE_MOVE),
+
                         new FollowPathCommand(drive, parkTrajectory),
                         new SequentialCommandGroup(
                                 new FunctionalCommand(

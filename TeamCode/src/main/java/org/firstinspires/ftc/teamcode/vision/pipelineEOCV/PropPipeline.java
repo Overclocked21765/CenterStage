@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.vision.pipelineEOCV;
 
 import android.graphics.Canvas;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -12,22 +14,23 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+@Config
 public class PropPipeline implements VisionProcessor {
     private static final boolean DEBUG = true;
-    public static int redLeftX = (int) (815);
-    public static int redLeftY = (int) (550);
-    public static int redCenterX = (int) (1365);
-    public static int redCenterY = (int) (475);
-    public static int blueLeftX = (int) (240);
-    public static int blueLeftY = (int) (525);
-    public static int blueCenterX = (int) (925);
-    public static int blueCenterY = (int) (485);
+    public static int redLeftX = (int) (100);
+    public static int redLeftY = (int) (500);
+    public static int redCenterX = (int) (700);
+    public static int redCenterY = (int) (350);
+    public static int blueLeftX = (int) (100);
+    public static int blueLeftY = (int) (500);
+    public static int blueCenterX = (int) (700);
+    public static int blueCenterY = (int) (350);
     public static int leftWidth = (int) (175);
-    public static int leftHeight = (int) (100);
-    public static int centerWidth = (int) (125);
-    public static int centerHeight = (int) (125);
+    public static int leftHeight = (int) (130);
+    public static int centerWidth = (int) (150);
+    public static int centerHeight = (int) (150);
     public static double BLUE_TRESHOLD = 70;
-    public static double RED_TRESHOLD = 100;
+    public static double RED_TRESHOLD = 90;
     private final Mat hsv = new Mat();
     public double leftColor = 0.0;
     public double centerColor = 0.0;

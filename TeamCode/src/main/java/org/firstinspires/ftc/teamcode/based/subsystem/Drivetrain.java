@@ -143,13 +143,13 @@ public class Drivetrain extends SubsystemBase{
                 firstTimeAfterStickRelease = false;
             }
             if (Math.abs(error) > margin) {
-                drive(controller.calculate(heading, targetHeading), leftX, leftY, heading, Constants.Drive.DRIVE_POWER_MODIFIER);
+                drive(controller.calculate(heading, targetHeading), leftX, leftY, heading, Constants.ConstantsDrive.DRIVE_POWER_MODIFIER);
             } else {
-                drive(0, leftX, leftY, heading, Constants.Drive.DRIVE_POWER_MODIFIER);
+                drive(0, leftX, leftY, heading, Constants.ConstantsDrive.DRIVE_POWER_MODIFIER);
             }
             telemetry.addData("Mode: ", "PID");
         } else {
-            drive(rightX, leftX, leftY, heading, Constants.Drive.DRIVE_POWER_MODIFIER);
+            drive(rightX, leftX, leftY, heading, Constants.ConstantsDrive.DRIVE_POWER_MODIFIER);
             firstTimeAfterStickRelease = true;
             telemetry.addData("Mode: ", "Rotating");
         }

@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -20,7 +19,7 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.util.LoopTimer;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
-@Autonomous
+@Autonomous(group = "Test")
 @Config
 public class LiftDuringPaths extends LinearOpMode {
     private LiftSubsystem m_lift;
@@ -52,7 +51,7 @@ public class LiftDuringPaths extends LinearOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        new InstantCommand(() -> m_lift.setTarget(Constants.Lift.MAX), m_lift),
+                        new InstantCommand(() -> m_lift.setTarget(Constants.ConstantsLift.MAX), m_lift),
                         new WaitCommand(TIME_WAIT),
                         new FollowPathCommand(drive, trajectory)
                 )

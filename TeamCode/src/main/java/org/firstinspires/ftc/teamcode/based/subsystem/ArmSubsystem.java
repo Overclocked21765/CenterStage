@@ -33,20 +33,20 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setIntakePosition(){
-        this.leftServo.setPosition(Constants.Arm.INTAKE_POSITION_LEFT);
-        this.rightServo.setPosition(Constants.Arm.INTAKE_POSITION_RIGHT);
+        this.leftServo.setPosition(Constants.ConstantsArm.INTAKE_POSITION_LEFT);
+        this.rightServo.setPosition(Constants.ConstantsArm.INTAKE_POSITION_RIGHT);
         state = ArmStates.INTAKE;
     }
 
     public void setDepositPosition(){
-        this.leftServo.setPosition(Constants.Arm.OUTTAKE_POSITION_LEFT);
-        this.rightServo.setPosition(Constants.Arm.OUTTAKE_POSITION_RIGHT);
+        this.leftServo.setPosition(Constants.ConstantsArm.OUTTAKE_POSITION_LEFT);
+        this.rightServo.setPosition(Constants.ConstantsArm.OUTTAKE_POSITION_RIGHT);
         state = ArmStates.DEPOSIT;
     }
 
     public void setAltDepositPosition(){
-        this.leftServo.setPosition(Constants.Arm.OUTTAKE_ALT_POSITION_LEFT);
-        this.rightServo.setPosition(Constants.Arm.OUTTAKE_ALT_POSITION_RIGHT);
+        this.leftServo.setPosition(Constants.ConstantsArm.OUTTAKE_ALT_POSITION_LEFT);
+        this.rightServo.setPosition(Constants.ConstantsArm.OUTTAKE_ALT_POSITION_RIGHT);
         state = ArmStates.DEPOSIT_ALT;
     }
 
@@ -55,6 +55,7 @@ public class ArmSubsystem extends SubsystemBase {
         this.rightServo.setPosition(r);
         state = ArmStates.NAN;
     }
+
 
 
     public ArmStates getState() {

@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.util.LoopTimer;
 import org.firstinspires.ftc.teamcode.rr.drive.SampleMecanumDrive;
 
-@Autonomous
+@Autonomous(group = "Test")
 public class LiftDuringPathsNoCommands extends OpMode {
     private SampleMecanumDrive drive;
     private LiftSubsystem lift;
@@ -59,7 +59,7 @@ public class LiftDuringPathsNoCommands extends OpMode {
     @Override
     public void start(){
         loopTimer.reset();
-        lift.setTarget(Constants.Lift.MAX);
+        lift.setTarget(Constants.ConstantsLift.MAX);
         liftTimer.reset();
     }
 

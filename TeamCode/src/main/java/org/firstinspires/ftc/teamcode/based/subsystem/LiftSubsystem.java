@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.based.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -68,7 +67,7 @@ public class LiftSubsystem extends SubsystemBase {
 
     public void doResetMovement(){
         this.resetting = true;
-        this.setPower(Constants.Lift.RESET_SPEED);
+        this.setPower(Constants.ConstantsLift.RESET_SPEED);
     }
 
     public void reset(){
@@ -77,7 +76,7 @@ public class LiftSubsystem extends SubsystemBase {
         this.rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.target = Constants.Lift.GROUND_POSITION;
+        this.target = Constants.ConstantsLift.GROUND_POSITION;
         controller.reset();
         this.resetting = false;
     }
@@ -88,16 +87,16 @@ public class LiftSubsystem extends SubsystemBase {
 
     public void move(double du){
         if (Double.compare(0, du) != 0) {
-            int add = (int) (Math.round(du * Constants.Lift.TICK_PER_REQ));
-            if (this.target + add > Constants.Lift.MAX) this.target = Constants.Lift.MAX;
-            else if (this.target + add < Constants.Lift.GROUND_POSITION)
-                this.target = Constants.Lift.GROUND_POSITION;
+            int add = (int) (Math.round(du * Constants.ConstantsLift.TICK_PER_REQ));
+            if (this.target + add > Constants.ConstantsLift.MAX) this.target = Constants.ConstantsLift.MAX;
+            else if (this.target + add < Constants.ConstantsLift.GROUND_POSITION)
+                this.target = Constants.ConstantsLift.GROUND_POSITION;
             else this.target += add;
         }
     }
 
     public void moveManually(double speed){
-        if (this.currentPosition < Constants.Lift.MAX && this.currentPosition > Constants.Lift.GROUND_POSITION){
+        if (this.currentPosition < Constants.ConstantsLift.MAX && this.currentPosition > Constants.ConstantsLift.GROUND_POSITION){
             triggerMoving = true;
             this.setPower(speed);
         } else {
